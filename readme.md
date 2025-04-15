@@ -64,4 +64,5 @@ farewell_agent_model = LiteLlm(model = "ollama/deepseek-r1:14b")
 ## references
 
 [1] https://google.github.io/adk-docs/get-started/quickstart/#set-up-the-model
+
 [2] https://www.youtube.com/watch?v=SjZG-QKrw5o

@@ -5,13 +5,15 @@ from google.adk.memory import InMemoryMemoryService
 from google.adk.models.lite_llm import LiteLlm
 from dotenv import load_dotenv
 
-
+# Load environment variables
 load_dotenv('./.env')
 
+# Initialize models
 root_agent_model = LiteLlm(model = "ollama/deepseek-r1:14b")
 greeting_agent_model = LiteLlm(model = "ollama/deepseek-r1:14b")
 farewell_agent_model = LiteLlm(model = "ollama/deepseek-r1:14b")
 
+# Initialize session service
 session_service = InMemoryMemoryService()
 
 APP_NAME = "Carl's Weather App"
@@ -28,6 +30,9 @@ session = session_service.add_session_to_memory(
     session = session
 )
 
+# ----------- Define tools -----------
+
+# say_hello tool
 def say_hello(name: str = "there") -> str:
     """
    Provides a simple greeting, optionally addressing the user by name.
@@ -40,7 +45,8 @@ def say_hello(name: str = "there") -> str:
    """
     print(f"--- Tool: say_hello called with name: {name} ---")
     return f"Hello {name}!"
-    
+
+# say_goodbye tool
 def say_goodbye() -> str:
     """
     Provides a simple farewell message to conclude the conversation.
@@ -48,6 +54,7 @@ def say_goodbye() -> str:
     print(f"--- Tool: say_goodbye called ---")
     return f"Goodbye! Have a nice day."
 
+# get_weather tool
 def get_weather(city: str) -> dict:
     """
     Retrieves the current weather for a specified city.
@@ -69,6 +76,9 @@ def get_weather(city: str) -> dict:
             "error_message": f"City {city} not found.",
         }
 
+# ----------- Initialize agents -----------
+
+# greeting_agent
 greeting_agent = Agent(
     name="greeting_agent",
     model=greeting_agent_model,
@@ -80,6 +90,7 @@ greeting_agent = Agent(
     tools=[say_hello],
 )
 
+# farewell_agent
 farewell_agent = Agent(
     name="farewell_agent",
     model=greeting_agent_model,
@@ -90,6 +101,7 @@ farewell_agent = Agent(
     tools=[say_goodbye],
 )
 
+# root_agent
 root_agent = Agent(
     name="root_agent",
     model=root_agent_model,
@@ -106,6 +118,7 @@ root_agent = Agent(
     sub_agents=[greeting_agent, farewell_agent]
 )
 
+# ----------- Initialize runner -----------
 runner_root = Runner(
     app_name = APP_NAME,
     session_service = session_service,
